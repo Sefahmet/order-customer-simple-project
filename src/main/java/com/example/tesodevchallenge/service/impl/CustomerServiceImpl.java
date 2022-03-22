@@ -45,18 +45,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean updateCustomer(Customer customer) {
-
-        try{
-            Customer recordedCustomer = getCustomer(customer.getId());
+        if(validate(customer.getId())) {
+            Optional<Customer> recordedCustomer = customerRepository.findById(customer.getId());
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             customer.setUpdatedAt(date);
-            customer.setCreatedAt(recordedCustomer.getCreatedAt());
+            customer.setCreatedAt(recordedCustomer.get().getCreatedAt());
             customerRepository.save(customer);
             return true;
-        }catch (Exception e){
-            return false;
+        }else{
+            throw new InvalidRequestException("{validation.invalid.customer}");
         }
+
     }
 
     @Override

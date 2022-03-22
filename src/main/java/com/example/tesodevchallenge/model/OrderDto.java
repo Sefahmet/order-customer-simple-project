@@ -1,14 +1,10 @@
 package com.example.tesodevchallenge.model;
 
-import com.example.tesodevchallenge.model.entity.Product;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.tesodevchallenge.model.entity.Address;
+import com.example.tesodevchallenge.model.entity.Customer;
 import lombok.Data;
-import org.mapstruct.Mapper;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,12 +14,12 @@ public class OrderDto {
 
     private UUID id;
     private Integer quantity;
-    private float price;
+    private Integer price;
     private String status;
     private Address address;
+    private Customer customer;
     private Date createdAt;
     private Date updatedAt;
-    private Address addresses;
 
 
 }

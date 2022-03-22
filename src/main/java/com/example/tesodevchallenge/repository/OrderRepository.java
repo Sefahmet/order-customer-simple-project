@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    List<Order> getOrdersByCustomerId(@Param("customer_id") UUID uuid);
-
+    List<Order> findAllByCustomer(@Param("customer_id") UUID uuid);
+    List<Order> findAllByStatusIsNot(String status);
 }

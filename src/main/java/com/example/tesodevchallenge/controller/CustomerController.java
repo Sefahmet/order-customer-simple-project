@@ -61,5 +61,9 @@ public class CustomerController {
         boolean response = customerService.deleteCustomer(uuid);
         return new ResponseEntity(response, HttpStatus.OK);
     }
+    @PutMapping(value = "/update")
+    public ResponseEntity<Boolean> updateCustomer(@Valid @RequestBody Customer customer){
+        return new ResponseEntity(customerService.updateCustomer(customer),HttpStatus.OK);
+    }
 
 }

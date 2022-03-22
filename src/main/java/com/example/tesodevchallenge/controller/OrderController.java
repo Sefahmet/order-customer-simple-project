@@ -15,10 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -41,7 +43,7 @@ public class OrderController {
     @GetMapping(value = "/all")
     public ResponseEntity<List<OrderDto>> allOrder(){
         List<Order> orders = orderService.getAllOrder();
-        return new ResponseEntity(orders,HttpStatus.OK);
+        return new ResponseEntity(ORDER_MAPPER.toDtos(orders), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/{cid}")
@@ -62,17 +64,21 @@ public class OrderController {
 
     @PutMapping(value = "/update")
     public ResponseEntity<Boolean> updateOrder(@Valid @RequestBody Order order){
+        System.out.println(order);
         return new ResponseEntity(orderService.updateOrder(order),HttpStatus.OK);
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<UUID> createOrder(@Valid @RequestBody OrderDto order){
-        return new ResponseEntity(orderService.createOrder(ORDER_MAPPER.toEntity(order)),HttpStatus.OK);
+    public ResponseEntity<UUID> createOrder(
+            @Valid @RequestBody Order order,
+            @Valid @RequestParam UUID address_id,
+            @Valid @RequestParam UUID customer_id
+    ){
+        return new ResponseEntity(orderService.createOrder(order,address_id,customer_id),HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-status")
     public ResponseEntity<Boolean> changeStatus(@Valid @RequestParam("id") UUID id, @Valid @RequestParam("status") String status){
-
         return new ResponseEntity(orderService.changeStatus(id,status),HttpStatus.OK);
     }
 

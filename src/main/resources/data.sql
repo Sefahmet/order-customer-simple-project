@@ -38,9 +38,9 @@ CREATE TABLE address
 CREATE TABLE orders
 (
     id           uuid UNIQUE DEFAULT uuid_generate_v4() primary key ,
-    quantity     INT NOT NULL,
-    price        FLOAT NOT NULL,
-    status       VARCHAR NOT NULL ,
+    quantity     INT ,
+    price        INT ,
+    status       VARCHAR ,
     created_date DATE ,
     updated_date DATE,
     customer_id  uuid,
@@ -67,8 +67,14 @@ VALUES ('b03ac8f7-c531-4a35-b4e6-59dd822d8882','Sefa', 'Altundal','sefaaltunda@g
        ('a92d23a7-7e94-456e-9c10-190c7cdfcd8c','Faik', 'Sevim','fako@gmail.com','5314992213',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
        ('1d4d5c03-f343-43fc-ba0f-a2a206dd7edf','Gürhan','Çifci','grhngmail.com','5314992214',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04');
 
+
 INSERT INTO address(id,address_line, city, country, city_code,customer_id)
-VALUES ('d09c45f2-8d8b-437a-8697-306a6ed668d7','Başak mah. ali soylu cad. k-4 d-11','İstanbul','Türkiye',34480,'b03ac8f7-c531-4a35-b4e6-59dd822d8882');
+VALUES ('d09c45f2-8d8b-437a-8697-306a6ed668d7','Başak mah. ali soylu cad. k-4 d-11','İstanbul','Türkiye',34480,'b03ac8f7-c531-4a35-b4e6-59dd822d8882'),
+       ('542a092f-dfdc-4978-bdb2-63852d13ba7d','Beykoz Merkez Mah','İstanbul','Türkiye',34480,'6892ce53-5450-4bf3-b8ee-9190245c5ea0');
+INSERT INTO address(address_line, city, country, city_code,customer_id)
+VALUES
+        ('Beykoz Merkez Mah','İstanbul','Türkiye',34480,'a92d23a7-7e94-456e-9c10-190c7cdfcd8c');
+
 
 INSERT INTO orders(id,quantity,price,status,created_date,updated_date,customer_id,address_id)
 VALUES ('95c394c0-aee3-4014-9501-d2df0bf4fbf3',20,1000,'delivered',DATE'2022-03-18 15:13:04',DATE '2022-03-18 15:13:04','b03ac8f7-c531-4a35-b4e6-59dd822d8882','d09c45f2-8d8b-437a-8697-306a6ed668d7'),

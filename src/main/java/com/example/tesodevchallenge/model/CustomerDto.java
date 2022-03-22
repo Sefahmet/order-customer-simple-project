@@ -1,10 +1,9 @@
 package com.example.tesodevchallenge.model;
 
+import com.example.tesodevchallenge.model.entity.Address;
 import com.example.tesodevchallenge.model.entity.Order;
 import lombok.Data;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,5 +16,6 @@ public class CustomerDto {
     private String email;
     private String phoneNumber;
     private List<Order> oldOrders;
+    private List<Address> addresses;
 
 }
