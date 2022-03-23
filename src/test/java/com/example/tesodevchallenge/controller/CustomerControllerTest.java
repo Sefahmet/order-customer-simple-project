@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class CustomerControllerTest {
 
     private MockMvc mvc;
@@ -46,11 +50,11 @@ class CustomerControllerTest {
     @InjectMocks
     private CustomerController customerController;
 
-    CustomerControllerTest() throws Exception {
-    }
+
 
     @BeforeEach
     public void setup(){
+        JacksonTester.initFields(this, new ObjectMapper());
         mvc = MockMvcBuilders.standaloneSetup(customerController)
                 .setControllerAdvice(new GenericExceptionHandler())
                 .build();
@@ -60,17 +64,24 @@ class CustomerControllerTest {
 
     @Test
     void getCustomer_Success() throws Exception {
+        //init
         Date date = new Date();
         UUID uuid = UUID.fromString("b03ac8f7-c531-4a35-b4e6-59dd822d8882");
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Customer expectedCustomer = new Customer(uuid,
                                         "Sefa","Altundal","sefaaltundal@gmail.com",
                                          "5314992211",date,date,null,null);
+
+        //when
         when(customerService.getCustomer(uuid)).thenReturn(expectedCustomer);
+
+        //then
         MockHttpServletResponse response = mvc.perform(
                 get("/api/customer/id/?id=b03ac8f7-c531-4a35-b4e6-59dd822d8882")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn().getResponse();
+
+        //assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         Customer actualCustomer = new ObjectMapper().readValue(response.getContentAsString(),Customer.class);
         assertEquals(expectedCustomer.toString(),actualCustomer.toString());
@@ -83,12 +94,14 @@ class CustomerControllerTest {
 
         //when
         when(customerService.getCustomer(uuid)).thenThrow(new NotFoundException("Customer"));
+
+        //then
         MockHttpServletResponse response = mvc.perform(
                         get("/api/customer/id/?id=b03ac8f7-c531-4a35-b4e6-59dd822d8882")
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn().getResponse();
 
-        //then
+        //assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
     @Test
@@ -98,12 +111,14 @@ class CustomerControllerTest {
 
         // when
         when(customerService.getCustomer(uuid)).thenThrow(new InvalidRequestException("Invalid ID"));
+
+        //then
         MockHttpServletResponse response = mvc.perform(
                         get("/api/customer/id/?id=b03ac8f7-c531-4a35-b4e6-59dd822d8882")
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn().getResponse();
 
-        // then
+        // assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
     @Test
@@ -123,45 +138,135 @@ class CustomerControllerTest {
         expectedCustomers.add(expectedCustomer1);
         expectedCustomers.add(expectedCustomer2);
 
-        //wehen
+        //when
         when(customerService.getAllCustomer()).thenReturn(expectedCustomers);
+
+        //then
         MockHttpServletResponse response = mvc.perform(
                         get("/api/customer/all")
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+        //assert
         List<Customer >actualCustomers = new ObjectMapper().readValue(response.getContentAsString(), new TypeReference<List<Customer>>(){});
         assertEquals(expectedCustomers.size(),actualCustomers.size());
         assertEquals(expectedCustomers.get(0).toString(),actualCustomers.get(0).toString());
     }
 
     @Test
-    void createCustomer() throws Exception {
+    void createCustomer_Success() throws Exception {
+
         // init
         Date date = new Date();
         UUID uuid = UUID.fromString("b03ac8f7-c531-4a35-b4e6-59dd822d8882");
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Customer expectedCustomer = new Customer(uuid,
-                "Sefa","Altundal","sefaaltundal@gmail.com",
-                "5314992211",date,date,null,null);
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setFirstName("Sefa");
+        expectedCustomer.setLastName("Altundal");
+        expectedCustomer.setEmail("sefaaltundal@gmail.com");
+        expectedCustomer.setPhoneNumber("5314992211");
 
         //when
         when(customerService.createCustomer(expectedCustomer)).thenReturn(uuid);
 
         // Json type
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        /*String jsonCredit = ow.writeValueAsString(credit);*/
-        String jsonCredit = "{\"firstName\" : \"Sefa\",\"lastName\" : \"Altundal\",\"email\" : \"sefaaltundal1@gmail.com\",\"phoneNumber\" : \"5314992211\"}";
+        String jsonCustomer = ow.writeValueAsString(expectedCustomer);
 
+        //then
         MockHttpServletResponse response = mvc.perform(post("/api/customer/create")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonCredit)).andDo(print()).andReturn().getResponse();
+                .content(jsonCustomer)).andDo(print()).andReturn().getResponse();
 
-        System.out.println(response.getContentAsString());
-        //then
+        //assert
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertEquals(response.getContentAsString(),uuid.toString());
     }
+    @Test
+    void createCustomer_FirstNameIsNull() throws Exception {
+
+        // init
+        Date date = new Date();
+        UUID uuid = UUID.fromString("b03ac8f7-c531-4a35-b4e6-59dd822d8882");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setFirstName("Sefa");
+        expectedCustomer.setEmail("sefaaltundal@gmail.com");
+        expectedCustomer.setPhoneNumber("5314992211");
+
+        //when
+        when(customerService.createCustomer(expectedCustomer)).thenThrow(new InvalidRequestException("Customer"));
+
+        // Json type
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String jsonCustomer = ow.writeValueAsString(expectedCustomer);
+
+        //then
+        MockHttpServletResponse response = mvc.perform(post("/api/customer/create")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonCustomer)).andDo(print()).andReturn().getResponse();
+
+        //assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+    }
+    @Test
+    void createCustomer_LastFirstNameIsNull() throws Exception {
+
+        // init
+        Date date = new Date();
+        UUID uuid = UUID.fromString("b03ac8f7-c531-4a35-b4e6-59dd822d8882");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setLastName("Altundal");
+        expectedCustomer.setEmail("sefaaltundal@gmail.com");
+        expectedCustomer.setPhoneNumber("5314992211");
+
+        //when
+        when(customerService.createCustomer(expectedCustomer)).thenThrow(new InvalidRequestException("Customer"));
+
+        // Json type
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String jsonCustomer = ow.writeValueAsString(expectedCustomer);
+
+        //then
+        MockHttpServletResponse response = mvc.perform(post("/api/customer/create")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonCustomer)).andDo(print()).andReturn().getResponse();
+
+        //assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+    }
+    @Test
+    void createCustomer_EmailIsNull() throws Exception {
+
+        // init
+        Date date = new Date();
+        UUID uuid = UUID.fromString("b03ac8f7-c531-4a35-b4e6-59dd822d8882");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Customer expectedCustomer = new Customer();
+        expectedCustomer.setFirstName("Sefa");
+        expectedCustomer.setLastName("Altundal");
+        expectedCustomer.setPhoneNumber("5314992211");
+
+        //when
+        when(customerService.createCustomer(expectedCustomer)).thenReturn(uuid);
+
+        // Json type
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String jsonCustomer = ow.writeValueAsString(expectedCustomer);
+
+        //then
+        MockHttpServletResponse response = mvc.perform(post("/api/customer/create")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonCustomer)).andDo(print()).andReturn().getResponse();
+
+        //assert
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+    }
+
 
 }

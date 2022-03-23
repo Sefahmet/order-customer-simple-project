@@ -23,7 +23,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
-    private final AddressRepository addressRepository;
     private final AddressService addressService;
 
     @Override
@@ -81,8 +80,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getOrdersByCustomerId(UUID id) {
+        Optional<Customer> customers = customerRepository.findById(id);
+        if (customers.isPresent()){
+            return orderRepository.findAllByCustomer(customers.get());
 
-        return orderRepository.findAllByCustomer(id);
+        }
+        else {
+            throw new NotFoundException("Customer");
+        }
     }
 
     @Override

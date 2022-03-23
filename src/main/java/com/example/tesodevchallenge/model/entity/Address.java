@@ -1,7 +1,5 @@
 package com.example.tesodevchallenge.model.entity;
 
-import com.example.tesodevchallenge.model.entity.Customer;
-import com.example.tesodevchallenge.model.entity.Order;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -11,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +52,7 @@ public class Address implements Serializable {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    public Address(String addressLine, String city, String country) {
+    public Address(String addressLine, String city, String country, int i) {
         this.addressLine = getAddressLine();
         this.city = city;
         this.country = country;

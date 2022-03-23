@@ -2,14 +2,11 @@ package com.example.tesodevchallenge.controller;
 
 import com.example.tesodevchallenge.model.OrderDto;
 import com.example.tesodevchallenge.model.entity.Order;
-import com.example.tesodevchallenge.model.mapper.CustomerMapper;
-import com.example.tesodevchallenge.model.mapper.OrderMapper;
 import com.example.tesodevchallenge.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,25 +26,24 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/order")
 public class OrderController {
 
-    private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
     private final OrderService orderService;
 
     @GetMapping
     public String welcome(){return "Welcome to Order Service";}
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Order> getOrder(@Valid @PathVariable UUID id){
+    @GetMapping(value = "/id")
+    public ResponseEntity<Order> getOrder(@Valid @RequestParam UUID id){
         return new ResponseEntity(orderService.getOrder(id), HttpStatus.OK);
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<OrderDto>> allOrder(){
+    public ResponseEntity<List<Order>> allOrder(){
         List<Order> orders = orderService.getAllOrder();
-        return new ResponseEntity(ORDER_MAPPER.toDtos(orders), HttpStatus.OK);
+        return new ResponseEntity(orders, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/customer/{cid}")
-    public ResponseEntity<List<Order>> getOrders(@Valid @PathVariable UUID cid){
+    @GetMapping(value = "/cid")
+    public ResponseEntity<List<Order>> getOrders(@Valid @RequestParam UUID cid){
         return new ResponseEntity(orderService.getOrdersByCustomerId(cid),HttpStatus.OK);
     }
 

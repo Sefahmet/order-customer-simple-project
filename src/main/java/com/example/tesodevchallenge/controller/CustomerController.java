@@ -5,11 +5,9 @@ import com.example.tesodevchallenge.exception.InvalidRequestException;
 import com.example.tesodevchallenge.exception.NotFoundException;
 import com.example.tesodevchallenge.model.CustomerDto;
 import com.example.tesodevchallenge.model.entity.Customer;
-import com.example.tesodevchallenge.model.mapper.CustomerMapper;
 import com.example.tesodevchallenge.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,6 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    private static final CustomerMapper CUSTOMER_MAPPER = Mappers.getMapper(CustomerMapper.class);
 
     @GetMapping
     public String welcome(){return "Welcome to Customer Service";}

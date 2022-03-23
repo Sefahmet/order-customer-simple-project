@@ -29,32 +29,40 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public UUID createCustomer(Customer customer) {
         try{
+            //Generate UUID
             UUID uuid = UUID.randomUUID();
+            //Date Formate
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
             Date date = new Date();
             customer.setId(uuid);
             customer.setCreatedAt(date);
             customer.setUpdatedAt(date);
+            // Save Via JPA repository to DB
             customerRepository.save(customer);
             return uuid;
 
         }catch (Exception e){
-            throw new InvalidRequestException("Request Denied");
+            throw new InvalidRequestException("{validation.invalid.customer.create}");
         }
     }
 
     @Override
     public boolean updateCustomer(Customer customer) {
         if(validate(customer.getId())) {
+            // Find Updatable customer
             Optional<Customer> recordedCustomer = customerRepository.findById(customer.getId());
+            // Date Format
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
+            //Set changing
             customer.setUpdatedAt(date);
             customer.setCreatedAt(recordedCustomer.get().getCreatedAt());
+            // Save Via JPA repository to DB
             customerRepository.save(customer);
             return true;
         }else{
-            throw new InvalidRequestException("{validation.invalid.customer}");
+            throw new InvalidRequestException("{validation.invalid.customer.update}");
         }
 
     }
@@ -62,7 +70,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean deleteCustomer(UUID id) {
         try{
+            // if customer exist
             Customer customer = getCustomer(id);
+            //delete via JPA repository
             customerRepository.delete(customer);
             return true;
         }catch (Exception e ){
@@ -78,9 +88,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomer(UUID id) {
-
+        //return customer ->if customer exist
+        // throw Exception -> else
         Optional<Customer> byId = customerRepository.findById(id);
-        return byId.orElseThrow(() -> new NotFoundException("Customer"));
+        return byId.orElseThrow(() -> new NotFoundException("Customer (id : '" + id + "')") );
 
     }
 
