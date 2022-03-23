@@ -62,14 +62,14 @@ CREATE TABLE orders_products
     primary key (orders_id,products_id)
 );
 INSERT INTO customers(id,first_name, last_name, email, phone_number,created_date,updated_date)
-VALUES ('b03ac8f7-c531-4a35-b4e6-59dd822d8882','Sefa', 'Altundal','sefaaltunda@gmail.com','5314992211',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
-       ('6892ce53-5450-4bf3-b8ee-9190245c5ea0','Kürşat', 'Berkay','krst@gmail.com','5314992212',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
-       ('a92d23a7-7e94-456e-9c10-190c7cdfcd8c','Faik', 'Sevim','fako@gmail.com','5314992213',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
-       ('1d4d5c03-f343-43fc-ba0f-a2a206dd7edf','Gürhan','Çifci','grhngmail.com','5314992214',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04');
+VALUES ('b03ac8f7-c531-4a35-b4e6-59dd822d8882','Sefa', 'Altundal','sefaaltundal@gmail.com','5314991111',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
+       ('6892ce53-5450-4bf3-b8ee-9190245c5ea0','Kürşat', 'Berkay','krst@gmail.com','5314991112',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
+       ('a92d23a7-7e94-456e-9c10-190c7cdfcd8c','Faik', 'Sevim','fako@gmail.com','5314991113',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04'),
+       ('1d4d5c03-f343-43fc-ba0f-a2a206dd7edf','Gürhan','Çifci','grhngmail.com','5314991114',DATE'2022-03-18 15:13:04',DATE'2022-03-18 15:13:04');
 
 
 INSERT INTO address(id,address_line, city, country, city_code,customer_id)
-VALUES ('d09c45f2-8d8b-437a-8697-306a6ed668d7','Başak mah. ali soylu cad. k-4 d-11','İstanbul','Türkiye',34480,'b03ac8f7-c531-4a35-b4e6-59dd822d8882'),
+VALUES ('d09c45f2-8d8b-437a-8697-306a6ed668d7','Başak mah.','İstanbul','Türkiye',34480,'b03ac8f7-c531-4a35-b4e6-59dd822d8882'),
        ('542a092f-dfdc-4978-bdb2-63852d13ba7d','Beykoz Merkez Mah','İstanbul','Türkiye',34480,'6892ce53-5450-4bf3-b8ee-9190245c5ea0');
 INSERT INTO address(address_line, city, country, city_code,customer_id)
 VALUES
